@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 namespace EntityFrameworkCore.DbContextScope
 {
+
+
   /// <summary>
   /// Creates and manages the DbContext instances used by this code block.
   /// You typically use a DbContextScope at the business logic service level. Each
@@ -27,6 +29,8 @@ namespace EntityFrameworkCore.DbContextScope
   /// </summary>
   public interface IDbContextScope : IDbContextReadOnlyScope
   {
+    bool IsReadOnly { get; }
+
     /// <summary>
     /// Saves the changes in all the DbContext instances that were created within this scope.
     /// This method can only be called once per scope.

@@ -18,11 +18,12 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     /// </summary>
     private readonly bool _nested;
     private readonly DbContextScope _parentScope;
-    private readonly bool _readOnly;
     private readonly IScopeDiagnostic _scopeDiagnostic;
     private readonly ILogger<DbContextScope> _logger;
     private bool _completed;
     private bool _disposed;
+
+    public bool IsReadOnly { get; private set; }
 
     public DbContextScope(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, IScopeDiagnostic scopeDiagnostic)
     {
@@ -36,14 +37,14 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
       _disposed = false;
       _completed = false;
-      _readOnly = readOnly;
+      IsReadOnly = readOnly;
       _scopeDiagnostic = scopeDiagnostic;
       _logger = loggerFactory.CreateLogger<DbContextScope>();
 
       _parentScope = AmbientContextScopeMagic.GetAmbientScope();
       if (_parentScope != null && joiningOption == DbContextScopeOption.JoinExisting)
       {
-        if (_parentScope._readOnly && !_readOnly)
+        if (_parentScope.IsReadOnly && !IsReadOnly)
         {
           throw new InvalidOperationException("Cannot nest a read/write DbContextScope within a read-only DbContextScope.");
         }
@@ -249,7 +250,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
           // Do our best to clean up as much as we can but don't throw here as it's too late anyway.
           try
           {
-            if (_readOnly)
+            if (IsReadOnly)
             {
               // Disposing a read-only scope before having called its SaveChanges() method
               // is the normal and expected behavior. Read-only scopes get committed automatically.
