@@ -8,7 +8,7 @@ namespace DbContextScope.Tests.DemoWithScope.Repositories
   {
     User Get(Guid userId);
 
-    Task<User> GetAsync(Guid userId);
+    ValueTask<User> GetAsync(Guid userId);
 
     void Add(User user);
   }

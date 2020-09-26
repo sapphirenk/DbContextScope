@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -55,9 +56,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       // First, we need to find what the EntityKey for this entity is. 
       // We need this EntityKey in order to check if this entity has
       // already been loaded in the parent DbContext's first-level cache (the ObjectStateManager).
-      var stateInCurrentScope = _contextInCurrentScope.ChangeTracker
-                                                     .GetInfrastructure()
-                                                     .TryGetEntry(toRefresh);
+      var stateInCurrentScope = _contextInCurrentScope.GetDependencies().StateManager.TryGetEntry(toRefresh);
 
       return stateInCurrentScope;
     }
@@ -73,9 +72,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
                          .ToArray();
 
       // Now we can see if that entity exists in the parent DbContext instance and refresh it.
-      var stateInParentScope = _correspondingParentContext.ChangeTracker
-                                                         .GetInfrastructure()
-                                                         .TryGetEntry(key, keyValues);
+      var stateInParentScope = _correspondingParentContext.GetDependencies().StateManager.TryGetEntry(key, keyValues);
 
       return stateInParentScope;
     }
