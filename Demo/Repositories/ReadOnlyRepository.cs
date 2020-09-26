@@ -1,6 +1,5 @@
 ﻿using DbContextScope.Demo.DatabaseContext;
 using EntityFrameworkCore.DbContextScope;
-using EntityFrameworkCore.DbContextScope.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,24 +11,20 @@ namespace DbContextScope.Demo.Repositories
 {
     public class ReadOnlyRepository<T> : IReadonlyRepository<T> where T : class
     {
-        private readonly IAmbientDbContextScopeLocator _ambientScopeLocator;
+        private readonly IAmbientDbContextLocator _ambientScopeLocator;
 
-        public ReadOnlyRepository(IAmbientDbContextScopeLocator scopeLocator)
+        public ReadOnlyRepository(IAmbientDbContextLocator contexLocator)
         {
-            _ambientScopeLocator = scopeLocator ?? throw new ArgumentNullException(nameof(scopeLocator));
+            _ambientScopeLocator = contexLocator ?? throw new ArgumentNullException(nameof(contexLocator));
         }
 
         private IQueryable<T> getQuery()
         {
-            IDbContextScope scope = _ambientScopeLocator.Get() ?? throw new InvalidOperationException("No open ambient DbContextScope was found.");
-            DbContext context = scope.Get<UserManagementDbContext>() ?? throw new InvalidOperationException("No open ambient DbContext was found.");
-            var dbSet = context.Set<T>();
-           
-            if (scope.IsReadOnly)
-            {
-                return dbSet.AsNoTracking();
-            }
-            return dbSet.AsQueryable();
+            IContextMetaData<UserManagementDbContext> contextMeta = _ambientScopeLocator.GetWithMetaData<UserManagementDbContext>() ?? throw new InvalidOperationException("No open ambient DbContext was found.");
+            
+            var dbSet = contextMeta.DbContext.Set<T>();
+            
+            return contextMeta.IsReadOnly ? dbSet.AsNoTracking() : dbSet;
         }
 
         public T Get(Expression<Func<T, bool>> predicate) => getQuery().FirstOrDefault(predicate);

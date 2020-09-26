@@ -5,7 +5,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   internal class AmbientContextSuppressor : IDisposable
   {
     private bool _disposed;
-    private DbContextScope _savedScope;
+    private DbContextScopeBase _savedScope;
 
     public AmbientContextSuppressor()
     {

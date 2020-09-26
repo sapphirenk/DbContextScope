@@ -85,12 +85,12 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     // to the DbContextScope instances we store in there, allowing them to get GCed.
     // The doc for ConditionalWeakTable isn't the best. This SO anser does a good job at explaining what 
     // it does: http://stackoverflow.com/a/18613811
-    private static readonly ConditionalWeakTable<InstanceIdentifier, DbContextScope> dbContextScopeInstances = new ConditionalWeakTable<InstanceIdentifier, DbContextScope>();
+    private static readonly ConditionalWeakTable<InstanceIdentifier, DbContextScopeBase> dbContextScopeInstances = new ConditionalWeakTable<InstanceIdentifier, DbContextScopeBase>();
 
     /// <summary>
     /// Makes the provided 'dbContextScope' available as the the ambient scope via the CallContext.
     /// </summary>
-    internal static void SetAmbientScope(DbContextScope newAmbientScope)
+    internal static void SetAmbientScope(DbContextScopeBase newAmbientScope)
     {
       if (newAmbientScope == null)
       {
@@ -140,7 +140,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     /// <summary>
     /// Get the current ambient scope or null if no ambient scope has been setup.
     /// </summary>
-    internal static DbContextScope GetAmbientScope()
+    internal static DbContextScopeBase GetAmbientScope()
     {
       // Retrieve the identifier of the ambient scope (if any)
       var instanceIdentifier = CallContext.GetData<InstanceIdentifier>(ambientDbContextScopeKey);

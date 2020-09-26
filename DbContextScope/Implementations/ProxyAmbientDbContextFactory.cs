@@ -16,7 +16,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       _ambientDbContextArgumentFactory = ambientDbContextArgumentFactory;
     }
 
-    public TDbContext CreateDbContext<TDbContext>(IDbContextScope dbContextScope, bool readOnly) where TDbContext : DbContext
+    public TDbContext CreateDbContext<TDbContext>(IDbContextScopeBase dbContextScope, bool readOnly) where TDbContext : DbContext
     {
       var interceptor = readOnly
         ? _dbContextReadOnlyInterceptor

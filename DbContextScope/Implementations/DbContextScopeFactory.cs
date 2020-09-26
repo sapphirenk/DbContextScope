@@ -29,7 +29,6 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
       var scope = new DbContextScope(
         joiningOption,
-        false,
         null,
         _ambientDbContextFactory,
         _loggerFactory,
@@ -62,7 +61,6 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
 
       var scope = new DbContextScope(
         DbContextScopeOption.ForceCreateNew,
-        false,
         isolationLevel,
         _ambientDbContextFactory,
         _loggerFactory,

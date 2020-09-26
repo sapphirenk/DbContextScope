@@ -27,10 +27,8 @@ namespace EntityFrameworkCore.DbContextScope
   /// or query classes to access the ambient DbContext instances without giving them access to the actual
   /// DbContextScope).
   /// </summary>
-  public interface IDbContextScope : IDbContextReadOnlyScope
+  public interface IDbContextScope : IDbContextScopeBase
   {
-    bool IsReadOnly { get; }
-
     /// <summary>
     /// Saves the changes in all the DbContext instances that were created within this scope.
     /// This method can only be called once per scope.

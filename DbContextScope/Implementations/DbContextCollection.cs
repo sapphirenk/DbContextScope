@@ -26,14 +26,14 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
   {
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
     private readonly IsolationLevel? _isolationLevel;
-    private readonly DbContextScope _dbContextScope;
+    private readonly DbContextScopeBase _dbContextScope;
     private readonly bool _readOnly;
     private readonly Dictionary<DbContext, IDbContextTransaction> _transactions;
     private bool _completed;
     private bool _disposed;
     private ILogger<DbContextCollection> _logger;
 
-    public DbContextCollection(DbContextScope dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, bool readOnly, IsolationLevel? isolationLevel)
+    public DbContextCollection(DbContextScopeBase dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, bool readOnly, IsolationLevel? isolationLevel)
     {
       _disposed = false;
       _completed = false;

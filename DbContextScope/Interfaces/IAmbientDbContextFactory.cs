@@ -23,6 +23,6 @@ namespace EntityFrameworkCore.DbContextScope
   /// </remarks>
   internal interface IAmbientDbContextFactory
   {
-    TDbContext CreateDbContext<TDbContext>(IDbContextScope dbContextScope, bool readOnly) where TDbContext : DbContext;
+    TDbContext CreateDbContext<TDbContext>(IDbContextScopeBase dbContextScope, bool readOnly) where TDbContext : DbContext;
   }
 }

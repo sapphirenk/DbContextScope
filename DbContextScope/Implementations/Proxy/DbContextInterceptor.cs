@@ -7,18 +7,16 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 {
   internal class DbContextInterceptor : DbContextInterceptorBase
   {
+    public override int GetHashCode() => typeof(DbContextInterceptor).GetHashCode();
 
-    protected override void OnHandleDispose(IInvocation invocation)
-    {
-      CurrentDbContextScope.Dispose();
-    }
+    protected override void OnHandleDispose(IInvocation invocation) => CurrentDbContextScope.Dispose();
 
     protected override int OnHandleSaveChanges(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
-      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, CurrentDbContextScope);
+      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, GetCurrentScope());
 
-      var changes = CurrentDbContextScope.SaveChanges();
+      var changes = GetCurrentScope().SaveChanges();
       parentUpdater.UpdateParent();
 
       return changes;
@@ -27,7 +25,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
     protected override Task<int> OnHandleSaveChangesAsync(IInvocation invocation)
     {
       var dbContext = (DbContext)invocation.Proxy;
-      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, CurrentDbContextScope);
+      var parentUpdater = new DetectModifiedEntitiesAndUpdateParentScope(dbContext, GetCurrentScope());
 
       Task<int> returnValue;
 
@@ -46,15 +44,14 @@ namespace EntityFrameworkCore.DbContextScope.Implementations.Proxy
 
     private async Task<int> saveChangesAndUpdateParentScopeAsync(DetectModifiedEntitiesAndUpdateParentScope parentUpdater, CancellationToken cancellationToken = default(CancellationToken))
     {
-      var changes = await CurrentDbContextScope.SaveChangesAsync(cancellationToken);
+      var changes = await GetCurrentScope().SaveChangesAsync(cancellationToken);
       await parentUpdater.UpdateParentAsync(cancellationToken);
 
       return changes;
     }
 
-    public override int GetHashCode()
-    {
-      return typeof(DbContextInterceptor).GetHashCode();
-    }
-  }
+    private DbContextScope GetCurrentScope() => CurrentDbContextScope as DbContextScope;
+
+
+   }
 }

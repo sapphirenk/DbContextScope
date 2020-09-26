@@ -7,8 +7,8 @@ namespace EntityFrameworkCore.DbContextScope
   /// A read-only DbContextScope. Refer to the comments for IDbContextScope
   /// for more details.
   /// </summary>
-  public interface IDbContextReadOnlyScope : IDisposable
+  public interface IDbContextReadOnlyScope: IDbContextScopeBase
   {
-    TDbContext Get<TDbContext>() where TDbContext : DbContext;
+        
   }
 }

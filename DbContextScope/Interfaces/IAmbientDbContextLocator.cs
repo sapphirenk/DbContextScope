@@ -13,5 +13,17 @@ namespace EntityFrameworkCore.DbContextScope
     /// Otherwise returns null.
     /// </summary>
     TDbContext Get<TDbContext>() where TDbContext : DbContext;
+
+    IContextMetaData<TDbContext> GetWithMetaData<TDbContext>() where TDbContext : DbContext;
+  
+   }
+
+  public interface IContextMetaData<TDbContext> where TDbContext : DbContext
+  {
+    TDbContext DbContext { get; }
+
+    bool IsReadOnly { get; }
   }
+
+
 }

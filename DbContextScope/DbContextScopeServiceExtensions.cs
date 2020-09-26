@@ -10,7 +10,6 @@ namespace EntityFrameworkCore.DbContextScope
       self.AddScoped<IDbContextScopeFactory, DbContextScopeFactory>();
       self.AddScoped<IAmbientDbContextLocator, AmbientDbContextLocator>();
       self.AddScoped<IAmbientDbContextFactory, ProxyAmbientDbContextFactory>();
-      self.AddScoped<IAmbientDbContextScopeLocator, AmbientDbContextScopeLocator>();
 
       self.AddLogging();
 
