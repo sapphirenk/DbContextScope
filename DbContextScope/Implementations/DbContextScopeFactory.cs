@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -11,7 +11,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     private readonly IAmbientDbContextFactory _ambientDbContextFactory;
     private readonly ILoggerFactory _loggerFactory;
     private readonly IScopeDiagnostic _scopeDiagnostic;
-    private readonly ILogger<DbContextScopeFactory> _logger;
+    private readonly ILogger _logger;
     private bool _disposed;
     private List<WeakReference<IDisposable>> _disposables = new List<WeakReference<IDisposable>>();
 
@@ -20,7 +20,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
       _ambientDbContextFactory = ambientDbContextFactory;
       _loggerFactory = loggerFactory;
       _scopeDiagnostic = scopeDiagnostic;
-      _logger = loggerFactory.CreateLogger<DbContextScopeFactory>();
+      _logger = loggerFactory.Create<DbContextScopeFactory>();
     }
 
     public IDbContextScope Create(DbContextScopeOption joiningOption = DbContextScopeOption.JoinExisting)

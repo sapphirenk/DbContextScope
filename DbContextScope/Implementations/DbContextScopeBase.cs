@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
+using NLog;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -15,10 +15,10 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         protected bool _disposed;
 
         private readonly IScopeDiagnostic _scopeDiagnostic;
-        private readonly ILogger<DbContextScopeBase> _logger;
+        private readonly ILogger _logger;
         private readonly bool _readonly;
 
-        public DbContextScopeBase(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, IScopeDiagnostic scopeDiagnostic)
+        protected DbContextScopeBase(DbContextScopeOption joiningOption, bool readOnly, IsolationLevel? isolationLevel, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, IScopeDiagnostic scopeDiagnostic)
         {
             if (isolationLevel.HasValue && joiningOption == DbContextScopeOption.JoinExisting)
             {
@@ -29,7 +29,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
             }
 
             _scopeDiagnostic = scopeDiagnostic;
-            _logger = loggerFactory.CreateLogger<DbContextScopeBase>();
+            _logger = loggerFactory.Create<DbContextScopeBase>();
 
             _readonly = readOnly;
 
@@ -98,7 +98,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
                         }
                         else
                         {
-                            _logger.LogWarning("The read/write DbContextScope was disposed without calling SaveChanges/Async! Attempt to rollback the changes.");
+                            _logger.Warn("The read/write DbContextScope was disposed without calling SaveChanges/Async! Attempt to rollback the changes.");
 
                             // Disposing a read/write scope before having called its SaveChanges() method
                             // indicates that something went wrong and that all changes should be rolled-back.
@@ -107,7 +107,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e, "Error while disposing DbContextScope.");
+                        _logger.Error(e, "Error while disposing DbContextScope.");
                         // TODO: throw exception?
                     }
 

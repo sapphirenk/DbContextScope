@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 using EntityFrameworkCore.DbContextScope.Implementations.Proxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
-using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
+using NLog;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
@@ -31,13 +30,13 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
     private readonly Dictionary<DbContext, IDbContextTransaction> _transactions;
     private bool _completed;
     private bool _disposed;
-    private ILogger<DbContextCollection> _logger;
+    private readonly ILogger _logger;
 
     public DbContextCollection(DbContextScopeBase dbContextScope, IAmbientDbContextFactory ambientDbContextFactory, ILoggerFactory loggerFactory, bool readOnly, IsolationLevel? isolationLevel)
     {
       _disposed = false;
       _completed = false;
-      _logger = loggerFactory.CreateLogger<DbContextCollection>();
+      _logger = loggerFactory.Create<DbContextCollection>();
 
       InitializedDbContexts = new Dictionary<Type, (DbContext DbContext, IDbContextProxyBypass Proxy)>();
       _transactions = new Dictionary<DbContext, IDbContextTransaction>();
@@ -108,7 +107,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         }
         catch (Exception e)
         {
-          _logger.LogError(e, "Error while disposing DbContextCollection.");
+          _logger.Error(e, "Error while disposing DbContextCollection.");
           // TODO: throw exception?
         }
       }
@@ -121,7 +120,7 @@ namespace EntityFrameworkCore.DbContextScope.Implementations
         }
         catch (Exception e)
         {
-          _logger.LogError(e, $"Error while disposing DbContext '{item.Key.FullName}'.");
+          _logger.Error(e, $"Error while disposing DbContext '{item.Key.FullName}'.");
           // TODO: throw exception?
         }
       }

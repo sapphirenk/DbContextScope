@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace EntityFrameworkCore.DbContextScope.Implementations
 {
